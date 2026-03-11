@@ -125,6 +125,7 @@ Add the following credentials:
 * Token generated from Kubernetes service account.
 
 ---
+<img width="1580" height="579" alt="Screenshot (137)" src="https://github.com/user-attachments/assets/08c8d4be-2378-4e15-a035-31867f9dd7d4" />
 
 ## Jenkins System Configuration
 
@@ -136,6 +137,7 @@ Add the following credentials:
    * Authentication Token
 
 ---
+<img width="1557" height="631" alt="Screenshot (138)" src="https://github.com/user-attachments/assets/b98a40ba-c23d-47a4-94ac-4ffcb30212b7" />
 
 ## Configure Maven Repository Credentials
 
@@ -206,6 +208,7 @@ Password: <password-from-file>
 
 ---
 <img width="1608" height="133" alt="Screenshot (131)" src="https://github.com/user-attachments/assets/c56d14d7-d185-4b6a-a6e1-c43fb7800ec6" />
+<img width="1920" height="848" alt="Screenshot (139)" src="https://github.com/user-attachments/assets/5fc4edb5-147c-487b-aa4f-76a51b5bcfad" />
 
 
 # 4. Maven Configuration
@@ -277,6 +280,7 @@ Example:
 kubeadm join 172.31.26.74:6443 --token yu4p9a.swbi31qhq7fq8hfd \
 --discovery-token-ca-cert-hash sha256:148af2f6f5b2684b47f70a27da5e9df2982996a27519b07030251d25adc5a1c6 
 ```
+<img width="1601" height="847" alt="Screenshot (144)" src="https://github.com/user-attachments/assets/959278e0-d1c4-43d6-9f20-69d896d84ef7" />
 
 ---
 
