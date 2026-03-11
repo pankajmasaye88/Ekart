@@ -147,8 +147,8 @@ Add Nexus credentials for:
 
 * `maven-releases`
 * `maven-snapshots`
-
 ---
+<img width="1920" height="848" alt="Screenshot (139)" src="https://github.com/user-attachments/assets/32cb9296-eaf4-4188-8c00-42928efece19" />
 
 # 2. SonarQube Server Setup
 
