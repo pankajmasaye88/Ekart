@@ -238,7 +238,7 @@ Update **pom.xml** with Nexus repositories.
 * 1 Master Node
 * 2 Worker Nodes
 
-Install on all nodes:
+Install on all nodes (Always follow official documentation for installation commands):
 
 * Docker
 * Kubernetes (kubeadm, kubelet, kubectl)
