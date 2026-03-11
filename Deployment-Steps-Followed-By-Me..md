@@ -208,7 +208,6 @@ Password: <password-from-file>
 
 ---
 <img width="1608" height="133" alt="Screenshot (131)" src="https://github.com/user-attachments/assets/c56d14d7-d185-4b6a-a6e1-c43fb7800ec6" />
-<img width="1920" height="848" alt="Screenshot (139)" src="https://github.com/user-attachments/assets/5fc4edb5-147c-487b-aa4f-76a51b5bcfad" />
 
 
 # 4. Maven Configuration
