@@ -4,6 +4,34 @@
 
 This project sets up a ** The Ultimate CI/CD Corporate DevOps Pipeline Project** using Jenkins, SonarQube, Nexus, Docker, and Kubernetes.
 
+# Final CI/CD Workflow
+
+```
+Code Commit from Git
+     ↓
+Jenkins Pipeline Trigger
+     ↓
+Compile the code
+     ↓
+Run Unit tests
+     ↓
+SonarQube Code Analysis
+     ↓
+OWASP Dependency Check
+     ↓
+Maven Build Package
+     ↓
+Deploy the artifact to Nexus repository
+     ↓
+Docker Image Build
+     ↓
+Scan Docker Image with Trivy
+     ↓
+Push Image to Registry
+     ↓
+Deploy to Kubernetes
+```
+
 ## Infrastructure Setup
 Create Security Group which allows Inbouncd traffic for multiple ports which can be used commonly for all upcoming servers.
 <img width="1597" height="469" alt="Security Group" src="https://github.com/user-attachments/assets/b658bee5-1cac-4740-b161-65359642e18b" />
@@ -393,23 +421,17 @@ cat ~/.kube/config
 ### Configure Docker Pipeline Steps
 
 Use Jenkins pipeline to:
-
-* Build Docker Image
-* Tag Image
-* Push Image to Docker Registry
-
----
-
-### Configure Kubernetes Deployment Steps
-
-Jenkins will:
-
-1. Build Application
-2. Scan with SonarQube
-3. Run OWASP Dependency Check
-4. Build Docker Image
-5. Push Image to Registry
-6. Deploy to Kubernetes Cluster
+1. Git Code checkout
+2. Compile the code
+3. Run unit tests
+4. Scan with SonarQube
+5. Run OWASP Dependency Check
+6. Build the package
+7. Deploy the artifact to Nexus
+8. Build Docker Image & Tag
+9. Scan Docker Image with Trivy
+10. Push Docker Image to Registry
+12. Deploy to Kubernetes Cluster
 
 ---
 
@@ -426,44 +448,108 @@ Jenkins will:
 | Config File Provider       |
 | Kubernetes                 |
 | Kubernetes CLI             |
+---
+---
+pipeline {
+    agent any
+    tools {
+        maven 'maven3'
+        jdk 'jdk17'
+    }
+    environment {
+        SCANNER_HOME=tool 'sonar-scanner'
+    }
+
+    stages {
+        stage('Git checkout') {
+            steps {
+               git branch: 'main', url: 'https://github.com/pankajmasaye88/Ekart.git'
+            }
+        }
+        
+        stage('Compile') {
+            steps {
+                sh "mvn compile"
+            }
+        }
+        
+        stage('Unit test') {
+            steps {
+                sh "mvn test -DskipTests=true"
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+               withSonarQubeEnv('sonar') {
+                sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=EKart -Dsonar.projectName=EKart \
+                    -Dsonar.java.binaries=. '''
+                }
+            }
+        }
+        
+        stage('OWASP Dependency Check') {
+            steps {
+                dependencyCheck additionalArguments: ' --scan ./', odcInstallation: 'DC'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh "mvn package -DskipTests=true"
+            }
+        }
+        
+        stage('Deploy to Nexus') {
+            steps {
+                withMaven(globalMavenSettingsConfig: 'global-maven', jdk: 'jdk17', maven: 'maven3', traceability: true) {
+                    sh "mvn deploy -DskipTests=true"
+                }
+            }
+        }
+        
+         stage('Build & Tag Docker Image') {
+            steps {
+                script{
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh "docker build -t docker123pankaj/ekart:latest -f docker/Dockerfile ."
+                    }
+                }
+            }
+        }
+        
+         stage('Trivy Scan') {
+            steps {
+                sh "trivy image docker123pankaj/ekart:latest > trivy-report.txt "
+            }
+        }
+        
+         stage('Push Docker Image') {
+            steps {
+                script{
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh "docker push docker123pankaj/ekart:latest"
+                    }
+                }
+            }
+        }
+        
+         stage('Kubernetes Deploy') {
+            steps {
+                withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'K8-token', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.26.74:6443') {
+                 sh "kubectl apply -f deploymentservice.yml -n webapps"
+                 sh "kubectl get svc -n webapps"
+                }   
+            }
+        }
+        
+    }
+}
 
 ---
 
-# Final CI/CD Workflow
 
-```
-Code Commit
-     ↓
-Jenkins Pipeline Trigger
-     ↓
-SonarQube Code Analysis
-     ↓
-OWASP Dependency Check
-     ↓
-Maven Build
-     ↓
-Docker Image Build
-     ↓
-Push Image to Registry
-     ↓
-Deploy to Kubernetes
-```
 
----
 
-# Result
 
-A fully automated **DevOps CI/CD pipeline** using:
-
-* Jenkins
-* SonarQube
-* Nexus
-* Docker
-* Kubernetes
-
-```
-
----
-
-If you want, I can also help you create a **professional GitHub DevOps portfolio README (with architecture diagram + pipeline code)** which will make your **DevOps internship portfolio look much stronger.**
-```
