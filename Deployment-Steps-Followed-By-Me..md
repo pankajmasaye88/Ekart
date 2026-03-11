@@ -51,7 +51,7 @@ Create total 6 AWS EC2 Ubuntu Instances (c7i-flex.large instance type is enough 
 
 # 1. Jenkins Server Setup
 
-## Install Required Tools on Jenkins AWS EC2 Instance :
+## Install Required Tools on Jenkins AWS EC2 Instance (Always follow official documentation for installation commands):
 - Jenkins (installation with suggested plugins)
 - Docker
 - Trivy
