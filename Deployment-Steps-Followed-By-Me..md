@@ -1,62 +1,433 @@
+Here is your **cleaned and properly structured GitHub README.md format**. You can copy-paste it directly into GitHub.
 
-The ultimate ci cd corporate devops pipeline project 
+````md
+# DevOps CI/CD Setup Guide
 
-Create seperate servers for each : 
-Jenkins master / slave - 1
-Sonar qube - 1
-Nexus or artifactory - 1
-Kubernetes ( master node, slave node1, slave nose 2) - 3
+This project sets up a **complete CI/CD pipeline environment** using Jenkins, SonarQube, Nexus, Docker, and Kubernetes.
 
+## Infrastructure Setup
 
+Create separate servers for each service:
 
-1.)
-Install jenkins on jenkins server and configure 
-Install docker also. Install trivy.
-Give docker user and group permission 
-Install plugins :- Sonarqube, docker, docker pipeline, nexus artifict uploader, OWASP, jdk eclipse temurin installer, pipeline Maven integration, config file provider plugin
-Configure tools jdk17, jdk21, Sonarqube scanner, maven3, dependency-check 6.5.1, docker
-Save Sonarqube token as secret text
-Save docker credentials 
-Add Sonarqube server in jenkins system
-Add plugin - config file provider
-Configure nexus credentials for maven-releases and maven-snapshots in config file management 
-Install kubectl using snap on jenkins server 
-Add jenkins to docker group
+| Service | Instances |
+|-------|-------|
+| Jenkins (Master/Slave) | 1 |
+| SonarQube | 1 |
+| Nexus / Artifactory | 1 |
+| Kubernetes Cluster | 3 (1 Master + 2 Worker Nodes) |
 
+---
 
-2.)
-Install docker on Sonarqube server, and run Sonarqube container on port 9000
-Create token 
+# 1. Jenkins Server Setup
 
+## Install Jenkins
+Install Jenkins on the Jenkins server.
 
+## Install Required Tools
+Install the following:
 
-3.)
-Install docker on nexus server and run nexus container on port 8081. 
-Go inside container and find default admin password 
+- Docker
+- Trivy
+- Kubectl (via snap)
 
+```bash
+sudo snap install kubectl --classic
+````
 
-4.)
-Configure url for maven-releases and maven-snapshots in pom.xml in distribution management 
-Configure jenkins pipeline 
+## Configure Docker Permissions
 
+```bash
+sudo usermod -aG docker jenkins
+sudo usermod -aG docker $USER
+```
 
-5.)
-Kubernetes setup
-Configure 3 ubuntu instances 
-Install docker & kubernetes on all 3 instances 
-Configure kubernetes cluster on master node
-and join other two nodes 
-Create webapps namespace 
-Create service account name jenkins using yml
-Create role (what kind of access this role gives to assigned resource like service account) using yml
-Assign role to service account we created 
-Create secret token for our service account jenkins
-View the secret token
-View the config file from kube folder
+---
 
+## Install Jenkins Plugins
 
-Configure jenkins pipeline step for docker
-Configure kubernetes pipeline step
-Add plugins :- kubernetes, kubernetes CLI
-Add kubernetes token in jenkins credentials 
+Install the following plugins:
 
+* SonarQube Scanner
+* Docker
+* Docker Pipeline
+* Nexus Artifact Uploader
+* OWASP Dependency Check
+* Eclipse Temurin Installer (JDK)
+* Pipeline Maven Integration
+* Config File Provider
+* Kubernetes
+* Kubernetes CLI
+
+---
+
+## Configure Global Tools in Jenkins
+
+Go to **Manage Jenkins → Global Tool Configuration** and configure:
+
+| Tool              | Version           |
+| ----------------- | ----------------- |
+| JDK               | 17, 21            |
+| Maven             | Maven 3           |
+| SonarQube Scanner | Latest            |
+| Dependency Check  | 6.5.1             |
+| Docker            | Installed version |
+
+---
+
+## Configure Jenkins Credentials
+
+Add the following credentials:
+
+### SonarQube Token
+
+* Type: **Secret Text**
+* Store SonarQube authentication token.
+
+### Docker Credentials
+
+* Docker registry login credentials.
+
+### Nexus Credentials
+
+* Username & Password for:
+
+  * `maven-releases`
+  * `maven-snapshots`
+
+### Kubernetes Token
+
+* Token generated from Kubernetes service account.
+
+---
+
+## Jenkins System Configuration
+
+1. Go to **Manage Jenkins → System Configuration**
+2. Add **SonarQube Server**
+3. Provide:
+
+   * SonarQube URL
+   * Authentication Token
+
+---
+
+## Configure Maven Repository Credentials
+
+Use **Config File Provider Plugin**.
+
+Add Nexus credentials for:
+
+* `maven-releases`
+* `maven-snapshots`
+
+---
+
+# 2. SonarQube Server Setup
+
+Install Docker.
+
+```bash
+sudo apt install docker.io -y
+```
+
+Run SonarQube container:
+
+```bash
+docker run -d \
+-p 9000:9000 \
+--name sonarqube \
+sonarqube:lts
+```
+
+Access SonarQube:
+
+```
+http://<sonarqube-server-ip>:9000
+```
+
+### Create SonarQube Token
+
+1. Login to SonarQube
+2. Go to **My Account → Security**
+3. Generate a **Token**
+4. Save it in **Jenkins Credentials**
+
+---
+
+# 3. Nexus Repository Setup
+
+Install Docker.
+
+Run Nexus container:
+
+```bash
+docker run -d \
+-p 8081:8081 \
+--name nexus \
+sonatype/nexus3
+```
+
+Access Nexus:
+
+```
+http://<nexus-server-ip>:8081
+```
+
+### Get Default Admin Password
+
+```bash
+docker exec -it nexus cat /nexus-data/admin.password
+```
+
+Login with:
+
+```
+Username: admin
+Password: <password-from-file>
+```
+
+---
+
+# 4. Maven Configuration
+
+Update **pom.xml** with Nexus repositories.
+
+```xml
+<distributionManagement>
+    <repository>
+        <id>maven-releases</id>
+        <url>http://NEXUS-IP:8081/repository/maven-releases/</url>
+    </repository>
+
+    <snapshotRepository>
+        <id>maven-snapshots</id>
+        <url>http://NEXUS-IP:8081/repository/maven-snapshots/</url>
+    </snapshotRepository>
+</distributionManagement>
+```
+
+---
+
+# 5. Kubernetes Cluster Setup
+
+## Prepare 3 Ubuntu Instances
+
+* 1 Master Node
+* 2 Worker Nodes
+
+Install on all nodes:
+
+* Docker
+* Kubernetes (kubeadm, kubelet, kubectl)
+
+---
+
+## Initialize Kubernetes Cluster (Master Node)
+
+```bash
+kubeadm init
+```
+
+Configure kubeconfig:
+
+```bash
+mkdir -p $HOME/.kube
+cp /etc/kubernetes/admin.conf $HOME/.kube/config
+```
+
+---
+
+## Join Worker Nodes
+
+Run the join command generated by `kubeadm init` on worker nodes.
+
+Example:
+
+```bash
+kubeadm join <master-ip>:6443 --token <token> \
+--discovery-token-ca-cert-hash sha256:<hash>
+```
+
+---
+
+## Create Namespace
+
+```bash
+kubectl create namespace webapps
+```
+
+---
+
+## Create Service Account (jenkins)
+
+Create `serviceaccount.yml`
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: webapps
+```
+
+Apply:
+
+```bash
+kubectl apply -f serviceaccount.yml
+```
+
+---
+
+## Create Role
+
+Create `role.yml`
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: webapps
+  name: jenkins-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "deployments"]
+  verbs: ["get", "watch", "list", "create", "update", "delete"]
+```
+
+Apply:
+
+```bash
+kubectl apply -f role.yml
+```
+
+---
+
+## Bind Role to Service Account
+
+Create `rolebinding.yml`
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-binding
+  namespace: webapps
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+  namespace: webapps
+roleRef:
+  kind: Role
+  name: jenkins-role
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Apply:
+
+```bash
+kubectl apply -f rolebinding.yml
+```
+
+---
+
+## Create Secret Token
+
+```bash
+kubectl create token jenkins -n webapps
+```
+
+View secret token:
+
+```bash
+kubectl get secret
+kubectl describe secret <secret-name>
+```
+
+View kubeconfig:
+
+```bash
+cd ~/.kube
+cat config
+```
+
+---
+
+# 6. Jenkins Pipeline Integration
+
+### Configure Docker Pipeline Steps
+
+Use Jenkins pipeline to:
+
+* Build Docker Image
+* Tag Image
+* Push Image to Docker Registry
+
+---
+
+### Configure Kubernetes Deployment Steps
+
+Jenkins will:
+
+1. Build Application
+2. Scan with SonarQube
+3. Run OWASP Dependency Check
+4. Build Docker Image
+5. Push Image to Registry
+6. Deploy to Kubernetes Cluster
+
+---
+
+# Required Jenkins Plugins
+
+| Plugin                     |
+| -------------------------- |
+| Docker                     |
+| Docker Pipeline            |
+| SonarQube Scanner          |
+| OWASP Dependency Check     |
+| Nexus Artifact Uploader    |
+| Pipeline Maven Integration |
+| Config File Provider       |
+| Kubernetes                 |
+| Kubernetes CLI             |
+
+---
+
+# Final CI/CD Workflow
+
+```
+Code Commit
+     ↓
+Jenkins Pipeline Trigger
+     ↓
+SonarQube Code Analysis
+     ↓
+OWASP Dependency Check
+     ↓
+Maven Build
+     ↓
+Docker Image Build
+     ↓
+Push Image to Registry
+     ↓
+Deploy to Kubernetes
+```
+
+---
+
+# Result
+
+A fully automated **DevOps CI/CD pipeline** using:
+
+* Jenkins
+* SonarQube
+* Nexus
+* Docker
+* Kubernetes
+
+```
+
+---
+
+If you want, I can also help you create a **professional GitHub DevOps portfolio README (with architecture diagram + pipeline code)** which will make your **DevOps internship portfolio look much stronger.**
+```
