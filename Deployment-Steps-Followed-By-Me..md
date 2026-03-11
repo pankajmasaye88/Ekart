@@ -70,7 +70,7 @@ Go to **Manage Jenkins → Global Tool Configuration** and configure:
 | Maven             | Maven 3           |
 | SonarQube Scanner | Latest            |
 | Dependency Check  | 6.5.1             |
-| Docker            | Installed version |
+| Docker            | 28.5.1 |
 
 ---
 
