@@ -7,7 +7,6 @@ Sonar qube - 1
 Nexus or artifactory - 1
 Kubernetes ( master node, slave node1, slave nose 2) - 3
 
-<img width="1920" height="1080" alt="Screenshot (143)" src="https://github.com/user-attachments/assets/fb024074-4d79-4ecc-a398-3c5c0e152a36" />
 
 
 1.)
