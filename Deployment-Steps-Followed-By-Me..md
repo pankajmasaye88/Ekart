@@ -46,6 +46,8 @@ Create total 6 AWS EC2 Ubuntu Instances (c7i-flex.large instance type is enough 
 | Kubernetes Cluster | 3 (1 Master + 2 Worker Nodes) |
 
 ---
+<img width="1646" height="389" alt="Screenshot (121)" src="https://github.com/user-attachments/assets/b7fa4a5f-5ce9-4330-91ac-afbbb4e00630" />
+
 
 # 1. Jenkins Server Setup
 
@@ -170,6 +172,8 @@ http://<sonarqube-server-ip>:9000
 4. Save it in **Jenkins Credentials** as secret text
 
 ---
+<img width="1609" height="134" alt="Screenshot (132)" src="https://github.com/user-attachments/assets/01af82e7-d619-4331-8471-f75e6c92bddc" />
+
 
 # 3. Nexus Repository Setup
 
@@ -201,6 +205,8 @@ Password: <password-from-file>
 ```
 
 ---
+<img width="1608" height="133" alt="Screenshot (131)" src="https://github.com/user-attachments/assets/c56d14d7-d185-4b6a-a6e1-c43fb7800ec6" />
+
 
 # 4. Maven Configuration
 
@@ -449,16 +455,28 @@ Use Jenkins pipeline to:
 | Kubernetes                 |
 | Kubernetes CLI             |
 ---
+<img width="1920" height="863" alt="Screenshot (122)" src="https://github.com/user-attachments/assets/4e2585cd-a6cc-4ca3-ba91-ef0da8afb8fe" />
+<img width="1920" height="845" alt="Screenshot (123)" src="https://github.com/user-attachments/assets/710b2fee-1fc2-4f0f-a24b-3fc6fc2bfade" />
+<img width="1920" height="299" alt="Screenshot (124)" src="https://github.com/user-attachments/assets/96309986-499c-4737-a084-5a1617ede0a9" />
+<img width="1920" height="445" alt="Screenshot (125)" src="https://github.com/user-attachments/assets/b098f4a9-bfec-4d12-a0e4-ce28ff3dc2df" />
+<img width="1920" height="859" alt="Screenshot (126)" src="https://github.com/user-attachments/assets/5e654a0c-8a94-4416-b233-72f8ccd185e3" />
+<img width="1920" height="447" alt="Screenshot (127)" src="https://github.com/user-attachments/assets/142c17a9-1b2a-4f74-bc22-994897f3d3ce" />
+<img width="1920" height="795" alt="Screenshot (128)" src="https://github.com/user-attachments/assets/28b655df-4772-4286-9402-b6f20ba125db" />
+<img width="1920" height="375" alt="Screenshot (129)" src="https://github.com/user-attachments/assets/439f3c17-9f72-4244-9b0c-145a694e68e7" />
+<img width="812" height="168" alt="Screenshot (130)" src="https://github.com/user-attachments/assets/6b87829e-5408-4795-8264-486d02134246" />
+<img width="1020" height="324" alt="Screenshot (133)" src="https://github.com/user-attachments/assets/b25ba249-014b-4a9f-bd9a-1d8b696cd3b5" />
+
 ---
-pipeline {
-    agent any
-    tools {
-        maven 'maven3'
-        jdk 'jdk17'
-    }
-    environment {
-        SCANNER_HOME=tool 'sonar-scanner'
-    }
+
+     pipeline {
+         agent any
+         tools {
+             maven 'maven3'
+             jdk 'jdk17'
+         }
+         environment {
+             SCANNER_HOME=tool 'sonar-scanner'
+         }
 
     stages {
         stage('Git checkout') {
@@ -543,9 +561,8 @@ pipeline {
                 }   
             }
         }
-        
-    }
-}
+         }
+     }
 
 ---
 
