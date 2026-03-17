@@ -503,7 +503,8 @@ Password: app-password
 ```text
 Default Recipients: your-email@gmail.com
 ```
-
+<img width="1613" height="729" alt="Screenshot (187)" src="https://github.com/user-attachments/assets/c387e50d-a54c-45c4-adfc-48bfdce43428" />
+<img width="1514" height="384" alt="Screenshot (186)" src="https://github.com/user-attachments/assets/d68063a4-0ef6-43ac-9d39-e5d90b670078" />
 
 
 ---
