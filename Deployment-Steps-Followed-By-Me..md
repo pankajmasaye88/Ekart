@@ -30,6 +30,8 @@ Scan Docker Image with Trivy
 Push Image to Registry
      ↓
 Deploy to Kubernetes
+     ↓
+Added Email confirmation
 ```
 
 ## Infrastructure Setup
@@ -468,6 +470,41 @@ Use Jenkins pipeline to:
 <img width="1920" height="375" alt="Screenshot (129)" src="https://github.com/user-attachments/assets/439f3c17-9f72-4244-9b0c-145a694e68e7" />
 <img width="812" height="168" alt="Screenshot (130)" src="https://github.com/user-attachments/assets/6b87829e-5408-4795-8264-486d02134246" />
 <img width="1020" height="324" alt="Screenshot (133)" src="https://github.com/user-attachments/assets/b25ba249-014b-4a9f-bd9a-1d8b696cd3b5" />
+
+
+# 📧 Jenkins Email Notification Setup
+
+##  Configure Email Settings
+
+Go to:
+
+```text
+Manage Jenkins → System Configuration
+```
+
+### 📌 Configure SMTP
+
+Example (Gmail):
+
+```text
+SMTP Server: smtp.gmail.com
+Port: 465
+Use TLS: Yes
+Username: your-email@gmail.com
+Password: app-password
+```
+
+⚠️ Generate app password for jenkins and use **App Password**, not your Gmail password.
+
+---
+
+### 📌 Default Email Settings
+
+```text
+Default Recipients: your-email@gmail.com
+```
+
+
 
 ---
 
